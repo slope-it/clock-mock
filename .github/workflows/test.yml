@@ -15,7 +15,7 @@ jobs:
             matrix:
                 php-version:
                     - "7.4"
-                    - "8.0"
+                 #  - "8.0" Re-enable when a compatible release of uopz is available for PHP 8.0 without manually building it
 
         steps:
             - name: "Checkout"

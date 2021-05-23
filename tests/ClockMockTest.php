@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace SlopeIt\Tests\ClockMock;
 
 use PHPUnit\Framework\TestCase;
+use SlopeIt\ClockMock\ClockMock;
 
 class ClockMockTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         ClockMock::reset();
     }

@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace Slope\Test\Clock;
+namespace SlopeIt\ClockMock\DateTimeMock;
 
 use DateTimeZone;
 
 /**
- * "Inner" class used as a mock for DateTimeImmutable
+ * Class used by ClockMock as a mock for DateTimeImmutable.
  *
- * @deprecated This must not be used in production code!
+ * @internal Do not use directly
  */
 class DateTimeImmutableMock extends \DateTimeImmutable
 {
     public function __construct(?string $datetime = 'now', DateTimeZone $timezone = null)
     {
-        // Just use the other class to not replicate freezing logic.
+        // Just use the mutable version of the mock, so we don't have to replicate freezing logic.
         $otherDateTime = new DateTimeMock($datetime, $timezone);
 
         parent::__construct($otherDateTime->format('Y-m-d H:i:s.u'), $timezone);

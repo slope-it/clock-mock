@@ -3,37 +3,11 @@ declare(strict_types=1);
 
 namespace SlopeIt\ClockMock;
 
+use SlopeIt\ClockMock\DateTimeMock\DateTimeImmutableMock;
+use SlopeIt\ClockMock\DateTimeMock\DateTimeMock;
+
 /**
- * Class providing a static utility to freeze the current system time using the php-uopz extension.
- *
- * Currently mocked functions/methods:
- *
- * time()
- * microtime()
- * date()
- * idate()
- * DateTime::__construct
- * DateTimeImmutable::__construct
- *
- * Currently MISSING functions/methods/globals:
- *
- * strtotime(),
- * mktime()
- * gmmktime()
- * gmdate()
- * getdate()
- * localtime()
- * strftime()
- * gmstrftime()
- * gettimeofday()
- * unixtojd()
- * date_create()
- * date_create_from_format()
- * date_create_immutable()
- * date_create_immutable_from_format()
- * DateTime::createFromFormat
- * DateTimeImmutable::createFromFormat
- * $_SERVER['REQUEST_TIME']
+ * Class that provides static utilities to freeze the current system time using the php-uopz extension.
  */
 final class ClockMock
 {
@@ -42,9 +16,9 @@ final class ClockMock
     private static ?\DateTimeInterface $frozenDateTime = null;
 
     /**
-     * @return mixed
+     * @return mixed Anything the provided `$callable` returns.
      */
-    public static function executeWithFrozenTime(\DateTimeInterface $dateTime, \Closure $callable)
+    public static function executeAtFrozenDateTime(\DateTimeInterface $dateTime, \Closure $callable)
     {
         try {
             self::freeze($dateTime);
@@ -75,13 +49,13 @@ final class ClockMock
             return;
         }
 
-        \uopz_unset_return('time');
-        \uopz_unset_return('microtime');
-        \uopz_unset_return('date');
-        \uopz_unset_return('idate');
+        uopz_unset_return('time');
+        uopz_unset_return('microtime');
+        uopz_unset_return('date');
+        uopz_unset_return('idate');
 
-        \uopz_unset_mock(\DateTime::class);
-        \uopz_unset_mock(\DateTimeImmutable::class);
+        uopz_unset_mock(\DateTime::class);
+        uopz_unset_mock(\DateTimeImmutable::class);
 
         self::$areMocksActive = false;
         self::$frozenDateTime = null;

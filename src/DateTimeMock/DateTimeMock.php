@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Slope\Test\Clock;
+namespace SlopeIt\ClockMock\DateTimeMock;
 
 use DateTimeZone;
+use SlopeIt\ClockMock\ClockMock;
 
 /**
- * "Inner" class used as a mock for DateTime
+ * Class used by ClockMock as a mock for DateTime.
  *
- * @deprecated This must not be used in production code!
+ * @internal Do not use directly
  */
 class DateTimeMock extends \DateTime
 {
