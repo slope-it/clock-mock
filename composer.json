@@ -1,0 +1,47 @@
+{
+    "name": "slope-it/clock-mock",
+    "description": "A library for mocking current date and time in tests.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "Clock",
+        "Mock",
+        "ClockMock",
+        "slope",
+        "slope.it"
+    ],
+    "authors": [
+        {
+            "name": "Andrea Sprega",
+            "email": "andrea.sprega@slope.it",
+            "role": "Software engineer"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "ext-uopz": ">=6.1.1"
+    },
+    "require-dev": {
+        "mockery/mockery": "1.4.3",
+        "phpunit/phpunit": "9.5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "SlopeIt\\ClockMock\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SlopeIt\\Tests\\ClockMock\\": "tests"
+        }
+    },
+    "archive": {
+        "exclude": [
+            ".github",
+            "/tests"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
