@@ -7,24 +7,22 @@
 [![License](https://poser.pugx.org/slope-it/clock-mock/license)](https://packagist.org/packages/slope-it/clock-mock)
 
 ClockMock provides a way for mocking the current timestamp used by PHP for \DateTime(Immutable) objects and date/time
-functions. It requires the uopz extension (at least version 6.1.1).
+related functions. It requires the [uopz extension](https://github.com/krakjoe/uopz) (version >= 6.1.1).
 
-Credits to:
-- [timecop](https://github.com/hnw/php-timecop), as ClockMock was inspired by it.
-- [ext-uopz](https://github.com/krakjoe/uopz), as ClockMock is just a very thin layer on top of the amazing uopz
-extension, which provides a very convenient way to mock any function or method, including the ones of the php stdlib, 
-at runtime.
+**This library is meant for development and testing only. It does not aim to propose a clock service to be used in
+production code, as we believe that you shouldn't need to do that when your only purpose is to mock the current time in
+testing code.**
 
 ## Why we built it
 
-- We were looking for a way to mock the native php date and time functions and classes without being forced to use a
-  third party library (e.g. [nesbot/carbon](https://github.com/briannesbitt/carbon))
-- For this purpose, we were previously using the `php-timecop` extension. Problem was that the extension never
-  implemented support for PHP 7.4 onward. That extension currently does not build at all for PHP 8.0.
+- We were looking for a way to mock the native php date and time functions and classes without having to change our
+  production code for it, and without having ot use any 3rd party library for handling dates/clocks.
+- For this purpose, we were previously using the `php-timecop` extension. The problem is that said extension never
+  implemented support for PHP 7.4 onward. That extension currently does not even build for PHP 8.0.
 
 ## Installation
 
-Composer is the only supported installation method. Run the following to install the latest version from Packagist:
+You can install the library using Composer. Run the following command to install the latest version from Packagist:
 
 ``` bash
 composer require --dev slope-it/clock-mock
@@ -34,29 +32,29 @@ Note that, as this is not a tool intended for production, it should be required 
 
 ## Mocked functions/methods
 
-- time()
-- microtime()
 - date()
-- idate()
-- strtotime()
-- getdate()
-- localtime()
 - date_create()
 - date_create_immutable()
+- getdate()
+- gmdate()
+- idate()
+- localtime()
+- microtime()
+- strtotime()
+- time()
 - DateTime::__construct
 - DateTimeImmutable::__construct
 
 ## Functions/methods with missing mocks (HELP NEEDED!)
 
-- mktime()
-- gmmktime()
-- gmdate()
-- strftime()
-- gmstrftime()
-- gettimeofday()
-- unixtojd()
 - date_create_from_format()
 - date_create_immutable_from_format()
+- gettimeofday()
+- gmmktime()
+- gmstrftime()
+- mktime()
+- strftime()
+- unixtojd()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat
 - $_SERVER['REQUEST_TIME']
@@ -72,7 +70,11 @@ Call `ClockMock::reset` when done to restore real, current time.
 Example:
 
 ``` php
-// ...
+<?php
+
+use PHPUnit\Framework\TestCase;
+use SlopeIt\ClockMock\ClockMock;
+
 class MyTestCase extends TestCase
 {
     public function test_something_using_stateful_mocking_api()
@@ -97,7 +99,11 @@ does not need manually freezing or re-setting time, so it can be less error pron
 Example:
 
 ``` php
-// ...
+<?php
+
+use PHPUnit\Framework\TestCase;
+use SlopeIt\ClockMock\ClockMock;
+
 class MyTestCase extends TestCase
 {
     public function test_something_using_stateless_mocking_api()
@@ -120,6 +126,13 @@ class MyTestCase extends TestCase
 
 Under any of these circumstances, please fork this repo and create a pull request. We are more than happy to accept
 contributions!
+
+## Credits
+
+- [php-timecop](https://github.com/hnw/php-timecop), as ClockMock was inspired by it.
+- [ext-uopz](https://github.com/krakjoe/uopz), as ClockMock is just a very thin layer on top of the amazing uopz
+  extension, which provides a very convenient way to mock any function or method, including the ones of the php stdlib,
+  at runtime.
 
 ## Maintainer
 
