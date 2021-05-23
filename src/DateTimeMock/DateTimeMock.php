@@ -13,7 +13,7 @@ use SlopeIt\ClockMock\ClockMock;
  */
 class DateTimeMock extends \DateTime
 {
-    public function __construct(?string $datetime = 'now', DateTimeZone $timezone = null)
+    public function __construct(?string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
         $datetime = $datetime ?? 'now';
 

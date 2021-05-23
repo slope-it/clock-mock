@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace SlopeIt\ClockMock;
 
+use DateTimeZone;
 use SlopeIt\ClockMock\DateTimeMock\DateTimeImmutableMock;
 use SlopeIt\ClockMock\DateTimeMock\DateTimeMock;
 
@@ -53,6 +54,11 @@ final class ClockMock
         uopz_unset_return('microtime');
         uopz_unset_return('date');
         uopz_unset_return('idate');
+        uopz_unset_return('strtotime');
+        uopz_unset_return('localtime');
+        uopz_unset_return('getdate');
+        uopz_unset_return('date_create');
+        uopz_unset_return('date_create_immutable');
 
         uopz_unset_mock(\DateTime::class);
         uopz_unset_mock(\DateTimeImmutable::class);
@@ -105,6 +111,46 @@ final class ClockMock
         uopz_set_return(
             'idate',
             fn (string $format, ?int $timestamp = null) => $idate_mock($format, $timestamp),
+            true,
+        );
+
+        $strtotime_mock = function (string $datetime, ?int $baseTimestamp) {
+            return strtotime($datetime, $baseTimestamp ?? self::$frozenDateTime->getTimestamp());
+        };
+        uopz_set_return(
+            'strtotime',
+            fn (string $datetime, ?int $baseTimestamp = null) => $strtotime_mock($datetime, $baseTimestamp),
+            true,
+        );
+
+        $localtime_mock = function (?int $timestamp, bool $associative) {
+            return localtime($timestamp ?? self::$frozenDateTime->getTimestamp(), $associative);
+        };
+        uopz_set_return(
+            'localtime',
+            fn (?int $timestamp = null, bool $associative = false) => $localtime_mock($timestamp, $associative),
+            true,
+        );
+
+        $getdate_mock = function (?int $timestamp) {
+            return getdate($timestamp ?? self::$frozenDateTime->getTimestamp());
+        };
+        uopz_set_return(
+            'getdate',
+            fn (?int $timestamp = null) => $getdate_mock($timestamp),
+            true,
+        );
+
+        uopz_set_return(
+            'date_create',
+            fn (?string $datetime = 'now', ?DateTimeZone $timezone = null) => new \DateTime($datetime, $timezone),
+            true,
+        );
+
+        uopz_set_return(
+            'date_create_immutable',
+            fn (?string $datetime = 'now', ?DateTimeZone $timezone = null)
+                => new \DateTimeImmutable($datetime, $timezone),
             true,
         );
 
