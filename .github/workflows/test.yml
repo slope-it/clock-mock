@@ -1,0 +1,44 @@
+name: "Continuous Integration"
+
+on:
+    pull_request:
+
+env:
+    fail-fast: true
+
+jobs:
+    phpunit-tests:
+        name: "PHPUnit tests"
+        runs-on: "ubuntu-20.04"
+
+        strategy:
+            matrix:
+                php-version:
+                    - "7.4"
+                 #  - "8.0" Re-enable when a compatible release of uopz is available for PHP 8.0 without manually building it
+
+        steps:
+            - name: "Checkout"
+              uses: "actions/checkout@v2"
+              with:
+                  fetch-depth: 2
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  php-version: "${{ matrix.php-version }}"
+                  ini-values: "zend.assertions=1"
+                  extensions: "uopz"
+
+            - name: "Cache dependencies installed with composer"
+              uses: "actions/cache@v2"
+              with:
+                  path: "~/.composer/cache"
+                  key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+                  restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+            - name: "Install dependencies with composer"
+              run: "composer update --no-interaction --no-progress --no-suggest"
+
+            - name: "Run PHPUnit"
+              run: "vendor/bin/phpunit -c . --coverage-text"
