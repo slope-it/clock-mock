@@ -38,24 +38,24 @@ Note that, as this is not a tool intended for production, it should be required 
 - microtime()
 - date()
 - idate()
+- strtotime()
+- getdate()
+- localtime()
+- date_create()
+- date_create_immutable()
 - DateTime::__construct
 - DateTimeImmutable::__construct
 
 ## Functions/methods with missing mocks (HELP NEEDED!)
 
-- strtotime(),
 - mktime()
 - gmmktime()
 - gmdate()
-- getdate()
-- localtime()
 - strftime()
 - gmstrftime()
 - gettimeofday()
 - unixtojd()
-- date_create()
 - date_create_from_format()
-- date_create_immutable()
 - date_create_immutable_from_format()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat

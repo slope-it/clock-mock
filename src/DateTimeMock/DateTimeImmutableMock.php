@@ -12,7 +12,7 @@ use DateTimeZone;
  */
 class DateTimeImmutableMock extends \DateTimeImmutable
 {
-    public function __construct(?string $datetime = 'now', DateTimeZone $timezone = null)
+    public function __construct(?string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
         // Just use the mutable version of the mock, so we don't have to replicate freezing logic.
         $otherDateTime = new DateTimeMock($datetime, $timezone);
