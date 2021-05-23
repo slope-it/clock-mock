@@ -6,11 +6,12 @@
 [![Total Downloads](https://poser.pugx.org/slope-it/clock-mock/downloads)](https://packagist.org/packages/slope-it/clock-mock)
 [![License](https://poser.pugx.org/slope-it/clock-mock/license)](https://packagist.org/packages/slope-it/clock-mock)
 
-This library provides a way for mocking time in tests. It requires the uopz extension (at least version 6.1.1).
+ClockMock provides a way for mocking the current timestamp used by PHP for \DateTime(Immutable) objects and date/time
+functions. It requires the uopz extension (at least version 6.1.1).
 
 Credits to:
-- [timecop](https://github.com/hnw/php-timecop), as this library is heavily inspired by it.
-- [ext-uopz](https://github.com/krakjoe/uopz), as this library is just a very thin layer on top of the amazing uopz
+- [timecop](https://github.com/hnw/php-timecop), as ClockMock was inspired by it.
+- [ext-uopz](https://github.com/krakjoe/uopz), as ClockMock is just a very thin layer on top of the amazing uopz
 extension, which provides a very convenient way to mock any function or method, including the ones of the php stdlib, 
 at runtime.
 
@@ -117,7 +118,8 @@ class MyTestCase extends TestCase
 * Do you want to contribute a new feature, or a missing mock?
 * Do you think documentation can be improved?
 
-Under any of these circumstances, please fork this repo and create a pull request. We are more than happy to accept contributions!
+Under any of these circumstances, please fork this repo and create a pull request. We are more than happy to accept
+contributions!
 
 ## Maintainer
 
