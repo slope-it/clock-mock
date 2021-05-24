@@ -109,6 +109,14 @@ class ClockMockTest extends TestCase
         );
     }
 
+    public function test_gmdate()
+    {
+        ClockMock::freeze(new \DateTime('1986-06-05'));
+
+        $this->assertEquals('1986-06-05', gmdate('Y-m-d'));
+        $this->assertEquals('2010-05-22', gmdate('Y-m-d', (new \DateTime('2010-05-22'))->getTimestamp()));
+    }
+
     public function test_idate()
     {
         ClockMock::freeze(new \DateTime('1986-06-05'));
