@@ -38,6 +38,15 @@ class ClockMockTest extends TestCase
         $this->assertEquals($juneFifth1986, new \DateTimeImmutable('1986-06-05'));
     }
 
+    public function test_DateTimeImmutable_constructor_with_timezone()
+    {
+        $dateWithTimezone = new \DateTimeImmutable('1986-06-05 14:41:32+02:00');
+        
+        ClockMock::freeze($fakeNow = new \DateTimeImmutable('now'));
+
+        $this->assertEquals($dateWithTimezone, new \DateTimeImmutable('1986-06-05 14:41:32+02:00'));
+    }
+    
     public function test_DateTime_constructor_with_absolute_mocked_date()
     {
         ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
