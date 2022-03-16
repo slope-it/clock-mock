@@ -84,6 +84,7 @@ final class ClockMock
         uopz_set_return('microtime', self::mock_microtime(), true);
         uopz_set_return('strtotime', self::mock_strtotime(), true,);
         uopz_set_return('time', self::mock_time(), true);
+        uopz_set_return(\DateTime::class, 'createFromFormat', self::date_create_from_format(), true);
 
         uopz_set_mock(\DateTime::class, DateTimeMock::class);
         uopz_set_mock(\DateTimeImmutable::class, DateTimeImmutableMock::class);
@@ -207,4 +208,34 @@ final class ClockMock
 
         return fn () => $time_mock();
     }
+
+    /**
+     * @see https://www.php.net/manual/en/datetime.createfromformat.php
+     */
+    private static function date_create_from_format(): callable
+    {
+        $date_create_from_format_mock = function (string $format, string $datetime, ?DateTimeZone $timezone = null) {
+            switch ($format) {
+                // handle BonusModelConstants::RECURRENCE_DAILY: calls
+                case 'H:i':
+                    return (new \DateTime)->modify($datetime);
+                    break;
+                // handle BonusModelConstants::RECURRENCE_WEEKLY calls
+                case 'D H:i':
+                    return (new \DateTime)->modify($datetime);
+                    break;
+                // handle BonusModelConstants::RECURRENCE_MONTHLY calls
+                case 'd H:i':
+                    $gd = getdate();
+                    return (new \DateTime(idate('Y', self::$frozenDateTime->getTimestamp()) . '-' . idate('m', self::$frozenDateTime->getTimestamp()) . '-' . $datetime));
+                    break;
+                // untreated format, call unmocked fuction
+                default:
+                    return \DateTime::createFromFormat($format, $datetime, $timezone);
+            }
+        };
+
+        return fn (string $format, string $datetime, ?DateTimeZone $timezone = null) => $date_create_from_format_mock($format, $datetime, $timezone);
+    }
+
 }
