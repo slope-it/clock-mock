@@ -14,8 +14,9 @@ jobs:
         strategy:
             matrix:
                 php-version:
-                    - "7.4"
-                 #  - "8.0" Re-enable when a compatible release of uopz is available for PHP 8.0 without manually building it
+                    # - "7.4" Disabled due to https://github.com/composer/composer/issues/10387, which did not resolve the issue here somehow
+                    - "8.0"
+                    - "8.1"
 
         steps:
             - name: "Checkout"
@@ -27,7 +28,6 @@ jobs:
               uses: "shivammathur/setup-php@v2"
               with:
                   php-version: "${{ matrix.php-version }}"
-                  ini-values: "zend.assertions=1"
                   extensions: "uopz"
 
             - name: "Cache dependencies installed with composer"
@@ -41,4 +41,4 @@ jobs:
               run: "composer update --no-interaction --no-progress --no-suggest"
 
             - name: "Run PHPUnit"
-              run: "vendor/bin/phpunit -c . --coverage-text"
+              run: "vendor/bin/phpunit --coverage-text"
