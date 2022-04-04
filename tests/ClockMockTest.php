@@ -67,7 +67,7 @@ class ClockMockTest extends TestCase
         ClockMock::freeze(new \DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
 
         // Reconstruct the current date (which is now based on the one mocked above) but apply a specific timezone. The
-        // resulting date should have its time modified accordingly to the timWezone.
+        // resulting date should have its time modified accordingly to the timezone.
         $nowWithIndiaTimezone = new \DateTime('now', $indiaTimezone = new \DateTimeZone('+05:30'));
 
         $this->assertEquals($indiaTimezone, $nowWithIndiaTimezone->getTimezone());
