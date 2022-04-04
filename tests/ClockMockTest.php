@@ -11,6 +11,11 @@ use SlopeIt\ClockMock\ClockMock;
  */
 class ClockMockTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ClockMock::reset();
+    }
+
     public function test_DateTimeImmutable_constructor_with_absolute_mocked_date()
     {
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
@@ -52,6 +57,24 @@ class ClockMockTest extends TestCase
         ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
 
         $this->assertEquals($fakeNow, new \DateTime('now'));
+    }
+
+    /**
+     * @see https://github.com/slope-it/clock-mock/issues/7
+     */
+    public function test_DateTime_constructor_with_microseconds_and_specific_timezone()
+    {
+        ClockMock::freeze(new \DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
+
+        // Reconstruct the current date (which is now based on the one mocked above) but apply a specific timezone. The
+        // resulting date should have its time modified accordingly to the timWezone.
+        $nowWithIndiaTimezone = new \DateTime('now', $indiaTimezone = new \DateTimeZone('+05:30'));
+
+        $this->assertEquals($indiaTimezone, $nowWithIndiaTimezone->getTimezone());
+        $this->assertSame('19', $nowWithIndiaTimezone->format('H')); // 14 plus 5
+        $this->assertSame('56', $nowWithIndiaTimezone->format('i')); // 26 plus 30
+        $this->assertSame('29', $nowWithIndiaTimezone->format('s')); // does not vary
+        $this->assertSame('123456', $nowWithIndiaTimezone->format('u')); // does not vary
     }
 
     public function test_DateTime_constructor_with_relative_mocked_date_with_microseconds()
@@ -174,10 +197,5 @@ class ClockMockTest extends TestCase
         ClockMock::freeze($fakeNow = new \DateTime('yesterday'));
 
         $this->assertEquals($fakeNow->getTimestamp(), time());
-    }
-
-    protected function tearDown(): void
-    {
-        ClockMock::reset();
     }
 }
