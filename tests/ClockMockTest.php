@@ -182,6 +182,29 @@ class ClockMockTest extends TestCase
         $this->assertEquals('2022-04-04 11:26:29', gmstrftime('%F %T'));
     }
 
+    public function dateProvider_gmmktime(): array
+    {
+        return [
+            ['2022-04-04 14:26:29.123456', [10], '2022-04-04 13:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, 10], '2022-04-04 13:10:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, 10], '2022-04-04 13:26:10.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, 10], '2022-10-04 13:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, null, 10], '2022-04-10 13:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, null, null, 10], '2010-04-04 13:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, 10, 10, 10, 10, 10], '2010-10-10 13:10:10.123456'],
+        ];
+    }
+
+    /**
+     * @dataProvider dateProvider_gmmktime
+     */
+    public function test_gmmktime(string $freezeDateTime, array $mktimeArgs, string $expectedDateTime)
+    {
+        ClockMock::freeze((new \DateTime($freezeDateTime))->setTimezone(new \DateTimeZone('Europe/Kiev')));
+
+        $this->assertEquals($expected = strtotime($expectedDateTime), $actual = gmmktime(...$mktimeArgs));
+    }
+
     public function test_idate()
     {
         ClockMock::freeze(new \DateTime('1986-06-05'));
@@ -223,6 +246,29 @@ class ClockMockTest extends TestCase
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('2022-04-04 14:26:29'));
 
         $this->assertEquals('2022-04-04 14:26:29', strftime('%F %T'));
+    }
+
+    public function dateProvider_mktime(): array
+    {
+        return [
+            ['2022-04-04 14:26:29.123456', [10], '2022-04-04 10:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, 10], '2022-04-04 10:10:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, 10], '2022-04-04 10:26:10.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, 10], '2022-10-04 10:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, null, 10], '2022-04-10 10:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, null, null, null, null, 10], '2010-04-04 10:26:29.123456'],
+            ['2022-04-04 14:26:29.123456', [10, 10, 10, 10, 10, 10], '2010-10-10 10:10:10.123456'],
+        ];
+    }
+
+    /**
+     * @dataProvider dateProvider_mktime
+     */
+    public function test_mktime(string $freezeDateTime, array $mktimeArgs, string $expectedDateTime)
+    {
+        ClockMock::freeze(new \DateTime($freezeDateTime));
+
+        $this->assertEquals(strtotime($expectedDateTime), mktime(...$mktimeArgs));
     }
 
     public function test_strtotime()
