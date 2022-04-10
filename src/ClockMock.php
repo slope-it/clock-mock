@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace SlopeIt\ClockMock;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use SlopeIt\ClockMock\DateTimeMock\DateTimeImmutableMock;
 use SlopeIt\ClockMock\DateTimeMock\DateTimeMock;
@@ -12,14 +15,19 @@ use SlopeIt\ClockMock\DateTimeMock\DateTimeMock;
  */
 final class ClockMock
 {
-    private static bool $areMocksActive = false;
+    private static ?DateTimeInterface $frozenDateTime = null;
 
-    private static ?\DateTimeInterface $frozenDateTime = null;
+    private static ?DateTimeInterface $originalRequestDateTime = null;
+
+    private static string $mode = self::MODE_REALTIME;
+
+    private const MODE_REALTIME = 'REALTIME';
+    private const MODE_FROZEN   = 'FROZEN';
 
     /**
      * @return mixed Anything the provided `$callable` returns.
      */
-    public static function executeAtFrozenDateTime(\DateTimeInterface $dateTime, \Closure $callable)
+    public static function executeAtFrozenDateTime(DateTimeInterface $dateTime, \Closure $callable)
     {
         try {
             self::freeze($dateTime);
@@ -29,14 +37,20 @@ final class ClockMock
         }
     }
 
-    public static function freeze(\DateTimeInterface $dateTime): void
+    public static function freeze(DateTimeInterface $dateTime): void
     {
         self::$frozenDateTime = clone $dateTime;
 
-        self::activateMocksIfNeeded();
+        if (self::$mode === self::MODE_REALTIME) {
+            self::$originalRequestDateTime = DateTime::createFromFormat('U.u', (string) $_SERVER['REQUEST_TIME_FLOAT']);
+            self::activateMocks();
+        }
+
+        self::updateRequestTime();
+        self::$mode = self::MODE_FROZEN;
     }
 
-    public static function getFrozenDateTime(): ?\DateTimeInterface
+    public static function getFrozenDateTime(): ?DateTimeInterface
     {
         return self::$frozenDateTime;
     }
@@ -46,7 +60,7 @@ final class ClockMock
      */
     public static function reset(): void
     {
-        if (!self::$areMocksActive) {
+        if (self::$mode === self::MODE_REALTIME) {
             return;
         }
 
@@ -61,19 +75,17 @@ final class ClockMock
         uopz_unset_return('strtotime');
         uopz_unset_return('time');
 
-        uopz_unset_mock(\DateTime::class);
-        uopz_unset_mock(\DateTimeImmutable::class);
+        uopz_unset_mock(DateTime::class);
+        uopz_unset_mock(DateTimeImmutable::class);
 
-        self::$areMocksActive = false;
-        self::$frozenDateTime = null;
+        self::resetRequestTime();
+
+        self::$frozenDateTime   = null;
+        self::$mode             = self::MODE_REALTIME;
     }
 
-    private static function activateMocksIfNeeded(): void
+    private static function activateMocks(): void
     {
-        if (self::$areMocksActive) {
-            return;
-        }
-
         uopz_set_return('date', self::mock_date(), true);
         uopz_set_return('date_create', self::mock_date_create(), true);
         uopz_set_return('date_create_immutable', self::mock_date_create_immutable(), true);
@@ -85,10 +97,21 @@ final class ClockMock
         uopz_set_return('strtotime', self::mock_strtotime(), true,);
         uopz_set_return('time', self::mock_time(), true);
 
-        uopz_set_mock(\DateTime::class, DateTimeMock::class);
-        uopz_set_mock(\DateTimeImmutable::class, DateTimeImmutableMock::class);
+        uopz_set_mock(DateTime::class, DateTimeMock::class);
+        uopz_set_mock(DateTimeImmutable::class, DateTimeImmutableMock::class);
+    }
 
-        self::$areMocksActive = true;
+    private static function updateRequestTime(): void
+    {
+        $_SERVER['REQUEST_TIME']       = self::$frozenDateTime->getTimestamp();
+        $_SERVER['REQUEST_TIME_FLOAT'] = (float) self::$frozenDateTime->format('U.u');
+    }
+
+    private static function resetRequestTime(): void
+    {
+        $_SERVER['REQUEST_TIME']       = self::$originalRequestDateTime->getTimestamp();
+        $_SERVER['REQUEST_TIME_FLOAT'] = (float) self::$originalRequestDateTime->format('U.u');
+        self::$originalRequestDateTime = null;
     }
 
     /**
@@ -108,7 +131,7 @@ final class ClockMock
      */
     private static function mock_date_create(): callable
     {
-        return fn (?string $datetime = 'now', ?DateTimeZone $timezone = null) => new \DateTime($datetime, $timezone);
+        return fn (?string $datetime = 'now', ?DateTimeZone $timezone = null) => new DateTime($datetime, $timezone);
     }
 
     /**
@@ -117,7 +140,7 @@ final class ClockMock
     private static function mock_date_create_immutable(): callable
     {
         return fn (?string $datetime = 'now', ?DateTimeZone $timezone = null)
-            => new \DateTimeImmutable($datetime, $timezone);
+            => new DateTimeImmutable($datetime, $timezone);
     }
 
     /**

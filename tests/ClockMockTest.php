@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace SlopeIt\Tests\ClockMock;
 
+use DateTime;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use SlopeIt\ClockMock\ClockMock;
 
@@ -18,45 +20,45 @@ class ClockMockTest extends TestCase
 
     public function test_DateTimeImmutable_constructor_with_absolute_mocked_date()
     {
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
+        ClockMock::freeze($fakeNow = new DateTimeImmutable('1986-06-05'));
 
-        $this->assertEquals($fakeNow, new \DateTimeImmutable('now'));
+        $this->assertEquals($fakeNow, new DateTimeImmutable('now'));
     }
 
     public function test_DateTimeImmutable_constructor_with_relative_mocked_date_with_microseconds()
     {
-        $juneFifth1986 = new \DateTime('1986-06-05');
+        $juneFifth1986 = new DateTime('1986-06-05');
 
-        ClockMock::freeze($fakeNow = new \DateTime('now')); // This uses current time including microseconds
+        ClockMock::freeze($fakeNow = new DateTime('now')); // This uses current time including microseconds
 
-        $this->assertEquals($fakeNow, new \DateTimeImmutable('now'));
-        $this->assertEquals($juneFifth1986, new \DateTimeImmutable('1986-06-05'));
+        $this->assertEquals($fakeNow, new DateTimeImmutable('now'));
+        $this->assertEquals($juneFifth1986, new DateTimeImmutable('1986-06-05'));
     }
 
     public function test_DateTimeImmutable_constructor_with_relative_mocked_date_without_microseconds()
     {
-        $juneFifth1986 = new \DateTimeImmutable('1986-06-05');
+        $juneFifth1986 = new DateTimeImmutable('1986-06-05');
 
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('yesterday')); // Yesterday at midnight, w/o microseconds
+        ClockMock::freeze($fakeNow = new DateTimeImmutable('yesterday')); // Yesterday at midnight, w/o microseconds
 
-        $this->assertEquals($fakeNow, new \DateTimeImmutable('now'));
-        $this->assertEquals($juneFifth1986, new \DateTimeImmutable('1986-06-05'));
+        $this->assertEquals($fakeNow, new DateTimeImmutable('now'));
+        $this->assertEquals($juneFifth1986, new DateTimeImmutable('1986-06-05'));
     }
 
     public function test_DateTimeImmutable_constructor_with_timezone()
     {
-        $dateWithTimezone = new \DateTimeImmutable('1986-06-05 14:41:32+02:00');
+        $dateWithTimezone = new DateTimeImmutable('1986-06-05 14:41:32+02:00');
         
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('now'));
+        ClockMock::freeze($fakeNow = new DateTimeImmutable('now'));
 
-        $this->assertEquals($dateWithTimezone, new \DateTimeImmutable('1986-06-05 14:41:32+02:00'));
+        $this->assertEquals($dateWithTimezone, new DateTimeImmutable('1986-06-05 14:41:32+02:00'));
     }
     
     public function test_DateTime_constructor_with_absolute_mocked_date()
     {
-        ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
+        ClockMock::freeze($fakeNow = new DateTime('1986-06-05'));
 
-        $this->assertEquals($fakeNow, new \DateTime('now'));
+        $this->assertEquals($fakeNow, new DateTime('now'));
     }
 
     /**
@@ -64,11 +66,11 @@ class ClockMockTest extends TestCase
      */
     public function test_DateTime_constructor_with_microseconds_and_specific_timezone()
     {
-        ClockMock::freeze(new \DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
+        ClockMock::freeze(new DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
 
         // Reconstruct the current date (which is now based on the one mocked above) but apply a specific timezone. The
         // resulting date should have its time modified accordingly to the timezone.
-        $nowWithIndiaTimezone = new \DateTime('now', $indiaTimezone = new \DateTimeZone('+05:30'));
+        $nowWithIndiaTimezone = new DateTime('now', $indiaTimezone = new \DateTimeZone('+05:30'));
 
         $this->assertEquals($indiaTimezone, $nowWithIndiaTimezone->getTimezone());
         $this->assertSame('19', $nowWithIndiaTimezone->format('H')); // 14 plus 5
@@ -79,49 +81,49 @@ class ClockMockTest extends TestCase
 
     public function test_DateTime_constructor_with_relative_mocked_date_with_microseconds()
     {
-        $juneFifth1986 = new \DateTime('1986-06-05');
+        $juneFifth1986 = new DateTime('1986-06-05');
 
-        ClockMock::freeze($fakeNow = new \DateTime('now')); // This uses current time including microseconds
+        ClockMock::freeze($fakeNow = new DateTime('now')); // This uses current time including microseconds
 
-        $this->assertEquals($fakeNow, new \DateTime('now'));
-        $this->assertEquals($juneFifth1986, new \DateTime('1986-06-05'));
+        $this->assertEquals($fakeNow, new DateTime('now'));
+        $this->assertEquals($juneFifth1986, new DateTime('1986-06-05'));
     }
 
     public function test_DateTime_constructor_with_relative_mocked_date_without_microseconds()
     {
-        $juneFifth1986 = new \DateTime('1986-06-05');
+        $juneFifth1986 = new DateTime('1986-06-05');
 
-        ClockMock::freeze($fakeNow = new \DateTime('yesterday')); // Yesterday at midnight, without microseconds
+        ClockMock::freeze($fakeNow = new DateTime('yesterday')); // Yesterday at midnight, without microseconds
 
-        $this->assertEquals($fakeNow, new \DateTime('now'));
-        $this->assertEquals($juneFifth1986, new \DateTime('1986-06-05'));
+        $this->assertEquals($fakeNow, new DateTime('now'));
+        $this->assertEquals($juneFifth1986, new DateTime('1986-06-05'));
     }
 
     public function test_date()
     {
-        ClockMock::freeze(new \DateTime('1986-06-05'));
+        ClockMock::freeze(new DateTime('1986-06-05'));
 
         $this->assertEquals('1986-06-05', date('Y-m-d'));
-        $this->assertEquals('2010-05-22', date('Y-m-d', (new \DateTime('2010-05-22'))->getTimestamp()));
+        $this->assertEquals('2010-05-22', date('Y-m-d', (new DateTime('2010-05-22'))->getTimestamp()));
     }
 
     public function test_date_create()
     {
-        ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
+        ClockMock::freeze($fakeNow = new DateTime('1986-06-05'));
 
         $this->assertEquals($fakeNow, date_create());
     }
 
     public function test_date_create_immutable()
     {
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
+        ClockMock::freeze($fakeNow = new DateTimeImmutable('1986-06-05'));
 
         $this->assertEquals($fakeNow, date_create_immutable());
     }
 
     public function test_getdate()
     {
-        ClockMock::freeze(new \DateTime('@518306400'));
+        ClockMock::freeze(new DateTime('@518306400'));
 
         $this->assertEquals(
             [
@@ -143,23 +145,23 @@ class ClockMockTest extends TestCase
 
     public function test_gmdate()
     {
-        ClockMock::freeze(new \DateTime('1986-06-05'));
+        ClockMock::freeze(new DateTime('1986-06-05'));
 
         $this->assertEquals('1986-06-05', gmdate('Y-m-d'));
-        $this->assertEquals('2010-05-22', gmdate('Y-m-d', (new \DateTime('2010-05-22'))->getTimestamp()));
+        $this->assertEquals('2010-05-22', gmdate('Y-m-d', (new DateTime('2010-05-22'))->getTimestamp()));
     }
 
     public function test_idate()
     {
-        ClockMock::freeze(new \DateTime('1986-06-05'));
+        ClockMock::freeze(new DateTime('1986-06-05'));
 
         $this->assertSame(1986, idate('Y'));
-        $this->assertSame(2010, idate('Y', (new \DateTime('2010-05-22'))->getTimestamp()));
+        $this->assertSame(2010, idate('Y', (new DateTime('2010-05-22'))->getTimestamp()));
     }
 
     public function test_localtime()
     {
-        ClockMock::freeze(new \DateTimeImmutable('1986-06-05'));
+        ClockMock::freeze(new DateTimeImmutable('1986-06-05'));
 
         $this->assertEquals(
             [
@@ -179,22 +181,38 @@ class ClockMockTest extends TestCase
 
     public function test_microtime()
     {
-        ClockMock::freeze(new \DateTime('@1619000631.123456'));
+        ClockMock::freeze(new DateTime('@1619000631.123456'));
 
         $this->assertEquals('0.123456 1619000631', microtime());
         $this->assertSame(1619000631.123456, microtime(true));
     }
 
+    public function test_server()
+    {
+        $serverRequestTime      = $_SERVER['REQUEST_TIME'];
+        $serverRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+
+        ClockMock::freeze($fakeNow = new DateTime('1986-06-05'));
+
+        $this->assertEquals($fakeNow->getTimestamp(), $_SERVER['REQUEST_TIME']);
+        $this->assertEquals((float) $fakeNow->format('U.u'), $_SERVER['REQUEST_TIME_FLOAT']);
+
+        ClockMock::reset();
+
+        $this->assertEquals($serverRequestTime, $_SERVER['REQUEST_TIME']);
+        $this->assertEquals($serverRequestTimeFloat, $_SERVER['REQUEST_TIME_FLOAT']);
+    }
+
     public function test_strtotime()
     {
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
+        ClockMock::freeze($fakeNow = new DateTimeImmutable('1986-06-05'));
 
         $this->assertEquals($fakeNow->getTimestamp(), strtotime('now'));
     }
 
     public function test_time()
     {
-        ClockMock::freeze($fakeNow = new \DateTime('yesterday'));
+        ClockMock::freeze($fakeNow = new DateTime('yesterday'));
 
         $this->assertEquals($fakeNow->getTimestamp(), time());
     }
