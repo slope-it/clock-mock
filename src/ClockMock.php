@@ -16,6 +16,8 @@ final class ClockMock
 
     private static ?\DateTimeInterface $frozenDateTime = null;
 
+    private static array $serverCache = [];
+
     /**
      * @return mixed Anything the provided `$callable` returns.
      */
@@ -33,6 +35,7 @@ final class ClockMock
     {
         self::$frozenDateTime = clone $dateTime;
 
+        self::cacheAndFreezeGlobalServer();
         self::activateMocksIfNeeded();
     }
 
@@ -46,6 +49,11 @@ final class ClockMock
      */
     public static function reset(): void
     {
+        // if cache is empty the global server variable has already been reset
+        if (!empty(self::$serverCache)) {
+            self::resetGlobalServer();
+        }
+
         if (!self::$areMocksActive) {
             return;
         }
@@ -89,6 +97,30 @@ final class ClockMock
         uopz_set_mock(\DateTimeImmutable::class, DateTimeImmutableMock::class);
 
         self::$areMocksActive = true;
+    }
+
+    private static function cacheAndFreezeGlobalServer(): void
+    {
+        // only cache on first freeze, reset should return to original
+        if (!array_key_exists('REQUEST_TIME', self::$serverCache)) {
+            self::$serverCache['REQUEST_TIME'] = $_SERVER['REQUEST_TIME'];
+        }
+        $_SERVER['REQUEST_TIME'] = self::$frozenDateTime->getTimestamp();
+
+        // only cache on first freeze, reset should return to original
+        if (!array_key_exists('REQUEST_TIME_FLOAT', self::$serverCache)) {
+            self::$serverCache['REQUEST_TIME_FLOAT'] = $_SERVER['REQUEST_TIME_FLOAT'];
+        }
+        $_SERVER['REQUEST_TIME_FLOAT'] = (float) self::$frozenDateTime->format('U.u');
+    }
+
+    private static function resetGlobalServer(): void
+    {
+        $_SERVER['REQUEST_TIME'] = self::$serverCache['REQUEST_TIME'];
+        unset(self::$serverCache['REQUEST_TIME']);
+
+        $_SERVER['REQUEST_TIME_FLOAT'] = self::$serverCache['REQUEST_TIME_FLOAT'];
+        unset(self::$serverCache['REQUEST_TIME_FLOAT']);
     }
 
     /**

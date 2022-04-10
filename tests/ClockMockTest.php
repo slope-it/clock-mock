@@ -185,6 +185,39 @@ class ClockMockTest extends TestCase
         $this->assertSame(1619000631.123456, microtime(true));
     }
 
+    public function test_server()
+    {
+        $serverRequestTime      = $_SERVER['REQUEST_TIME'];
+        $serverRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+
+        ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
+
+        $this->assertEquals($fakeNow->getTimestamp(), $_SERVER['REQUEST_TIME']);
+        $this->assertEquals((float) $fakeNow->format('U.u'), $_SERVER['REQUEST_TIME_FLOAT']);
+
+        ClockMock::reset();
+
+        $this->assertEquals($serverRequestTime, $_SERVER['REQUEST_TIME']);
+        $this->assertEquals($serverRequestTimeFloat, $_SERVER['REQUEST_TIME_FLOAT']);
+    }
+
+    public function test_server_freeze_twice()
+    {
+        $serverRequestTime      = $_SERVER['REQUEST_TIME'];
+        $serverRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+
+        ClockMock::freeze(new \DateTime('1986-06-05'));
+        ClockMock::freeze($fakeNow = new \DateTime('1986-06-06'));
+
+        $this->assertEquals($fakeNow->getTimestamp(), $_SERVER['REQUEST_TIME']);
+        $this->assertEquals((float) $fakeNow->format('U.u'), $_SERVER['REQUEST_TIME_FLOAT']);
+
+        ClockMock::reset();
+
+        $this->assertEquals($serverRequestTime, $_SERVER['REQUEST_TIME']);
+        $this->assertEquals($serverRequestTimeFloat, $_SERVER['REQUEST_TIME_FLOAT']);
+    }
+
     public function test_strtotime()
     {
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
