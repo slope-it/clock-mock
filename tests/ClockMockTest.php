@@ -149,6 +149,13 @@ class ClockMockTest extends TestCase
         $this->assertEquals('2010-05-22', gmdate('Y-m-d', (new \DateTime('2010-05-22'))->getTimestamp()));
     }
 
+    public function test_gmstrftime()
+    {
+        ClockMock::freeze($fakeNow = new \DateTime('2022-04-04 14:26:29', new \DateTimeZone('Europe/Kiev')));
+
+        $this->assertEquals('2022-04-04 11:26:29', gmstrftime('%F %T'));
+    }
+
     public function test_idate()
     {
         ClockMock::freeze(new \DateTime('1986-06-05'));
@@ -183,6 +190,13 @@ class ClockMockTest extends TestCase
 
         $this->assertEquals('0.123456 1619000631', microtime());
         $this->assertSame(1619000631.123456, microtime(true));
+    }
+
+    public function test_strftime()
+    {
+        ClockMock::freeze($fakeNow = new \DateTimeImmutable('2022-04-04 14:26:29'));
+
+        $this->assertEquals('2022-04-04 14:26:29', strftime('%F %T'));
     }
 
     public function test_strtotime()

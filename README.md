@@ -37,9 +37,11 @@ Note that, as this is not a tool intended for production, it should be required 
 - date_create_immutable()
 - getdate()
 - gmdate()
+- gmstrftime()
 - idate()
 - localtime()
 - microtime()
+- strftime()  
 - strtotime()
 - time()
 - DateTime::__construct
@@ -51,9 +53,7 @@ Note that, as this is not a tool intended for production, it should be required 
 - date_create_immutable_from_format()
 - gettimeofday()
 - gmmktime()
-- gmstrftime()
 - mktime()
-- strftime()
 - unixtojd()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat
