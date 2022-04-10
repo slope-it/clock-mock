@@ -42,6 +42,7 @@ Note that, as this is not a tool intended for production, it should be required 
 - microtime()
 - strtotime()
 - time()
+- unixtojd()
 - DateTime::__construct
 - DateTimeImmutable::__construct
 
@@ -54,7 +55,6 @@ Note that, as this is not a tool intended for production, it should be required 
 - gmstrftime()
 - mktime()
 - strftime()
-- unixtojd()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat
 - $_SERVER['REQUEST_TIME']

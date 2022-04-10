@@ -61,6 +61,10 @@ final class ClockMock
         uopz_unset_return('strtotime');
         uopz_unset_return('time');
 
+        if (extension_loaded('calendar')) {
+            uopz_unset_return('unixtojd');
+        }
+
         uopz_unset_mock(\DateTime::class);
         uopz_unset_mock(\DateTimeImmutable::class);
 
@@ -84,6 +88,10 @@ final class ClockMock
         uopz_set_return('microtime', self::mock_microtime(), true);
         uopz_set_return('strtotime', self::mock_strtotime(), true,);
         uopz_set_return('time', self::mock_time(), true);
+
+        if (extension_loaded('calendar')) {
+            uopz_set_return('unixtojd', self::mock_unixtojd(), true);
+        }
 
         uopz_set_mock(\DateTime::class, DateTimeMock::class);
         uopz_set_mock(\DateTimeImmutable::class, DateTimeImmutableMock::class);
@@ -206,5 +214,17 @@ final class ClockMock
         };
 
         return fn () => $time_mock();
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.time.php
+     */
+    private static function mock_unixtojd(): callable
+    {
+        $unixtojd_mock = function (?int $timestamp) {
+            return unixtojd($timestamp ?? self::$frozenDateTime->getTimestamp());
+        };
+
+        return fn (?int $timestamp = null) => $unixtojd_mock($timestamp);
     }
 }
