@@ -56,10 +56,12 @@ final class ClockMock
         uopz_unset_return('getdate');
         uopz_unset_return('gettimeofday');
         uopz_unset_return('gmdate');
+        uopz_unset_return('gmmktime');
         uopz_unset_return('gmstrftime');
         uopz_unset_return('idate');
         uopz_unset_return('localtime');
         uopz_unset_return('microtime');
+        uopz_unset_return('mktime');
         uopz_unset_return('strftime');
         uopz_unset_return('strtotime');
         uopz_unset_return('time');
@@ -87,10 +89,12 @@ final class ClockMock
         uopz_set_return('getdate', self::mock_getdate(), true);
         uopz_set_return('gettimeofday', self::mock_gettimeofday(), true);
         uopz_set_return('gmdate', self::mock_gmdate(), true);
+        uopz_set_return('gmmktime', self::mock_gmmktime(), true);
         uopz_set_return('gmstrftime', self::mock_gmstrftime(), true);
         uopz_set_return('idate', self::mock_idate(), true);
         uopz_set_return('localtime', self::mock_localtime(), true);
         uopz_set_return('microtime', self::mock_microtime(), true);
+        uopz_set_return('mktime', self::mock_mktime(), true);
         uopz_set_return('strftime', self::mock_strftime(), true);
         uopz_set_return('strtotime', self::mock_strtotime(), true);
         uopz_set_return('time', self::mock_time(), true);
@@ -191,6 +195,26 @@ final class ClockMock
     }
 
     /**
+     * @see https://www.php.net/manual/en/function.gmmktime.php
+     */
+    private static function mock_gmmktime(): callable
+    {
+        $gmmktime_mock = function (int $hour, ?int $minute, ?int $second, ?int $month, ?int $day, ?int $year) {
+            /** @var \DateTime $gmtDateTime */
+            $gmtDateTime = self::mock_date_create()(self::mock_gmdate()('Y-m-d H:i:s.u'));
+
+            return self::mock_mktime()($hour + self::$frozenDateTime->getOffset() / 3600,
+                $minute ?? (int) $gmtDateTime->format('i'),
+                $second ?? (int) $gmtDateTime->format('s'),
+                $month ?? (int) $gmtDateTime->format('m'),
+                $day ?? (int) $gmtDateTime->format('j'),
+                $year ?? (int) $gmtDateTime->format('Y'));
+        };
+
+        return fn (int $hour, ?int $minute = null, ?int $second = null, ?int $month = null, ?int $day = null, ?int $year = null) => $gmmktime_mock($hour, $minute, $second, $month, $day, $year);
+    }
+
+    /**
      * @see https://www.php.net/manual/en/function.idate.php
      */
     private static function mock_idate(): callable
@@ -240,6 +264,23 @@ final class ClockMock
         };
 
         return fn (string $format, ?int $timestamp = null) => $strftime_mock($format, $timestamp);
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.mktime.php
+     */
+    private static function mock_mktime(): callable
+    {
+        $mktime_mock = function (int $hour, ?int $minute, ?int $second, ?int $month, ?int $day, ?int $year) {
+            return mktime($hour,
+                $minute ?? (int) self::$frozenDateTime->format('i'),
+                $second ?? (int) self::$frozenDateTime->format('s'),
+                $month ?? (int) self::$frozenDateTime->format('m'),
+                $day ?? (int) self::$frozenDateTime->format('j'),
+                $year ?? (int) self::$frozenDateTime->format('Y'));
+        };
+
+        return fn (int $hour, ?int $minute = null, ?int $second = null, ?int $month = null, ?int $day = null, ?int $year = null) => $mktime_mock($hour, $minute, $second, $month, $day, $year);
     }
 
     /**
