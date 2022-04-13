@@ -141,6 +141,32 @@ class ClockMockTest extends TestCase
         );
     }
 
+    public function dataProvider_gettimeofday(): array
+    {
+        return [
+            ['2022-04-04 14:26:29.123456', 'UTC', [1649082389, 123456, 0, 0]],
+            ['2022-03-04 14:26:29.123456', 'Europe/Kiev', [1646396789, 123456, -120, 0]],
+            ['2022-04-04 14:26:29.123456', 'Europe/Kiev', [1649071589, 123456, -180, 1]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_gettimeofday
+     */
+    public function test_gettimeofday(string $freezeDateTime, string $freezeTimeZone, array $expectedResult)
+    {
+        ClockMock::freeze(new \DateTime($freezeDateTime, new \DateTimeZone($freezeTimeZone)));
+
+        $this->assertEquals(array_combine(['sec', 'usec', 'minuteswest', 'dsttime'], $expectedResult), gettimeofday());
+    }
+
+    public function test_gettimeofday_as_float()
+    {
+        ClockMock::freeze(new \DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
+
+        $this->assertEquals(1649082389.123456, gettimeofday(true));
+    }
+
     public function test_gmdate()
     {
         ClockMock::freeze(new \DateTime('1986-06-05'));

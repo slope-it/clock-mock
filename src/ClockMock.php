@@ -54,6 +54,7 @@ final class ClockMock
         uopz_unset_return('date_create');
         uopz_unset_return('date_create_immutable');
         uopz_unset_return('getdate');
+        uopz_unset_return('gettimeofday');
         uopz_unset_return('gmdate');
         uopz_unset_return('gmstrftime');
         uopz_unset_return('idate');
@@ -80,6 +81,7 @@ final class ClockMock
         uopz_set_return('date_create', self::mock_date_create(), true);
         uopz_set_return('date_create_immutable', self::mock_date_create_immutable(), true);
         uopz_set_return('getdate', self::mock_getdate(), true);
+        uopz_set_return('gettimeofday', self::mock_gettimeofday(), true);
         uopz_set_return('gmdate', self::mock_gmdate(), true);
         uopz_set_return('gmstrftime', self::mock_gmstrftime(), true);
         uopz_set_return('idate', self::mock_idate(), true);
@@ -134,6 +136,26 @@ final class ClockMock
         };
 
         return fn (?int $timestamp = null) => $getdate_mock($timestamp);
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.gettimeofday.php
+     */
+    private static function mock_gettimeofday(): callable
+    {
+        $gettimeofday_mock = function (bool $as_float) {
+            if ($as_float) {
+                return (float) self::$frozenDateTime->format('U.u');
+            }
+            return [
+                'sec'         => self::$frozenDateTime->getTimestamp(),
+                'usec'        => (int) self::$frozenDateTime->format('u'),
+                'minuteswest' => (int) self::$frozenDateTime->format('Z') / -60,
+                'dsttime'     => (int) self::$frozenDateTime->format('I'),
+            ];
+        };
+
+        return fn (bool $as_float = false) => $gettimeofday_mock($as_float);
     }
 
     /**
