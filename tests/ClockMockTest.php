@@ -241,12 +241,12 @@ class ClockMockTest extends TestCase
 
     public function test_unixtojd()
     {
-        ClockMock::freeze($fakeNow = new \DateTime('January 1, 1970 GMT'));
+        ClockMock::freeze(new \DateTime('January 1, 1970 GMT'));
 
-        $this->assertEquals(2440587, unixtojd());
+        $this->assertEquals(2440588, unixtojd());
 
-        ClockMock::freeze($fakeNow = new \DateTime('January 3, 1970 GMT'));
+        ClockMock::freeze(new \DateTime('January 3, 1970 GMT'));
 
-        $this->assertEquals(2440589, unixtojd());
+        $this->assertEquals(2440590, unixtojd());
     }
 }
