@@ -36,10 +36,13 @@ Note that, as this is not a tool intended for production, it should be required 
 - date_create()
 - date_create_immutable()
 - getdate()
+- gettimeofday()  
 - gmdate()
+- gmstrftime()
 - idate()
 - localtime()
 - microtime()
+- strftime()  
 - strtotime()
 - time()
 - unixtojd()
@@ -50,11 +53,8 @@ Note that, as this is not a tool intended for production, it should be required 
 
 - date_create_from_format()
 - date_create_immutable_from_format()
-- gettimeofday()
 - gmmktime()
-- gmstrftime()
 - mktime()
-- strftime()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat
 - $_SERVER['REQUEST_TIME']
