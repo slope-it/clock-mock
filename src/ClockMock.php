@@ -12,9 +12,21 @@ use SlopeIt\ClockMock\DateTimeMock\DateTimeMock;
  */
 final class ClockMock
 {
+    /**
+     * Used to avoid installing mocks multiple times in case freeze is called multiple times in a row.
+     */
     private static bool $areMocksActive = false;
 
+    /**
+     * When set, time is currently frozen to this specific date and time.
+     */
     private static ?\DateTimeInterface $frozenDateTime = null;
+
+    /**
+     * When set, holds the original value from $_SERVER['REQUEST_TIME_FLOAT'] so that it can be used to restore it when
+     * resetting after a freeze.
+     */
+    private static ?float $originalServerRequestTimeFloat = null;
 
     /**
      * @return mixed Anything the provided `$callable` returns.
@@ -33,6 +45,15 @@ final class ClockMock
     {
         self::$frozenDateTime = clone $dateTime;
 
+        // When freezing, only store $_SERVER['REQUEST_TIME_FLOAT'] the first time (i.e. when the property is null).
+        // This way we will restore the actual original value even after freezing multiple times in a row.
+        if (self::$originalServerRequestTimeFloat === null) {
+            self::$originalServerRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+        }
+
+        $_SERVER['REQUEST_TIME'] = self::$frozenDateTime->getTimestamp();
+        $_SERVER['REQUEST_TIME_FLOAT'] = (float) self::$frozenDateTime->format('U.u');
+
         self::activateMocksIfNeeded();
     }
 
@@ -46,6 +67,12 @@ final class ClockMock
      */
     public static function reset(): void
     {
+        if (self::$originalServerRequestTimeFloat !== null) {
+            $_SERVER['REQUEST_TIME'] = (int) self::$originalServerRequestTimeFloat;
+            $_SERVER['REQUEST_TIME_FLOAT'] = self::$originalServerRequestTimeFloat;
+            self::$originalServerRequestTimeFloat = null;
+        }
+
         if (!self::$areMocksActive) {
             return;
         }

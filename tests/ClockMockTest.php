@@ -272,6 +272,29 @@ class ClockMockTest extends TestCase
         $this->assertSame(1619000631.123456, microtime(true));
     }
 
+    public function test_server_superglobal_request_time()
+    {
+        $originalServerRequestTime = $_SERVER['REQUEST_TIME'];
+        $originalServerRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+
+        ClockMock::freeze($fakeNow1 = new \DateTime('1986-06-05'));
+
+        $this->assertSame($fakeNow1->getTimestamp(), $_SERVER['REQUEST_TIME']);
+        $this->assertSame((float) $fakeNow1->format('U.u'), $_SERVER['REQUEST_TIME_FLOAT']);
+
+        // Freeze twice to make sure original values are still preserved even when freezing multiple times in a row.
+        ClockMock::freeze($fakeNow2 = new \DateTime('2022-05-28'));
+
+        $this->assertSame($fakeNow2->getTimestamp(), $_SERVER['REQUEST_TIME']);
+        $this->assertSame((float) $fakeNow2->format('U.u'), $_SERVER['REQUEST_TIME_FLOAT']);
+
+        ClockMock::reset();
+
+        // Verify that original values are restored when mocks are reset
+        $this->assertSame($originalServerRequestTime, $_SERVER['REQUEST_TIME']);
+        $this->assertSame($originalServerRequestTimeFloat, $_SERVER['REQUEST_TIME_FLOAT']);
+    }
+
     public function test_strftime()
     {
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('2022-04-04 14:26:29'));
