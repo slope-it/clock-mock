@@ -50,6 +50,8 @@ Note that, as this is not a tool intended for production, it should be required 
 - unixtojd()
 - DateTime::__construct
 - DateTimeImmutable::__construct
+- $_SERVER['REQUEST_TIME']
+- $_SERVER['REQUEST_TIME_FLOAT']
 
 ## Functions/methods with missing mocks (HELP NEEDED!)
 
@@ -57,7 +59,6 @@ Note that, as this is not a tool intended for production, it should be required 
 - date_create_immutable_from_format()
 - DateTime::createFromFormat
 - DateTimeImmutable::createFromFormat
-- $_SERVER['REQUEST_TIME']
 
 ## Usage
 
