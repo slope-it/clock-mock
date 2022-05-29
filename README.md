@@ -15,10 +15,12 @@ testing code.**
 
 ## Why we built it
 
+Here is an article that explains in depth how and why this library was built: [link to the article](https://dev.to/andreasprega/clockmock-a-convenient-way-to-mock-date-and-time-in-php-5032).
+
+TL;DR
 - We were looking for a way to mock the native php date and time functions and classes without having to change our
   production code for it, and without having ot use any 3rd party library for handling dates/clocks.
-- For this purpose, we were previously using the `php-timecop` extension. The problem is that said extension never
-  implemented support for PHP 7.4 onward. That extension currently does not even build for PHP 8.0.
+- For this purpose, we were previously using the `php-timecop` extension but that never implemented support for PHP 7.4 onward.
 
 ## Installation
 
@@ -131,7 +133,3 @@ contributions!
 - [ext-uopz](https://github.com/krakjoe/uopz), as ClockMock is just a very thin layer on top of the amazing uopz
   extension, which provides a very convenient way to mock any function or method, including the ones of the php stdlib,
   at runtime.
-
-## Maintainer
-
-[@andreasprega](https://twitter.com/andreasprega)
