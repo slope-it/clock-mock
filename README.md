@@ -34,7 +34,9 @@ Note that, as this is not a tool intended for production, it should be required 
 
 - date()
 - date_create()
+- date_create_from_format()
 - date_create_immutable()
+- date_create_immutable_from_format()
 - getdate()
 - gettimeofday()  
 - gmdate()
@@ -49,16 +51,11 @@ Note that, as this is not a tool intended for production, it should be required 
 - time()
 - unixtojd()
 - DateTime::__construct
+- DateTime::createFromFormat
 - DateTimeImmutable::__construct
+- DateTimeImmutable::createFromFormat
 - $_SERVER['REQUEST_TIME']
 - $_SERVER['REQUEST_TIME_FLOAT']
-
-## Functions/methods with missing mocks (HELP NEEDED!)
-
-- date_create_from_format()
-- date_create_immutable_from_format()
-- DateTime::createFromFormat
-- DateTimeImmutable::createFromFormat
 
 ## Usage
 

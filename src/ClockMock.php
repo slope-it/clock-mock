@@ -112,7 +112,9 @@ final class ClockMock
 
         uopz_set_return('date', self::mock_date(), true);
         uopz_set_return('date_create', self::mock_date_create(), true);
+        uopz_set_return('date_create_from_format', self::mock_date_create_from_format(), true);
         uopz_set_return('date_create_immutable', self::mock_date_create_immutable(), true);
+        uopz_set_return('date_create_immutable_from_format', self::mock_date_create_immutable_from_format(), true);
         uopz_set_return('getdate', self::mock_getdate(), true);
         uopz_set_return('gettimeofday', self::mock_gettimeofday(), true);
         uopz_set_return('gmdate', self::mock_gmdate(), true);
@@ -131,7 +133,9 @@ final class ClockMock
         }
 
         uopz_set_mock(\DateTime::class, DateTimeMock::class);
+        uopz_set_return(\DateTime::class, 'createFromFormat', self::mock_date_create_from_format(), true);
         uopz_set_mock(\DateTimeImmutable::class, DateTimeImmutableMock::class);
+        uopz_set_return(\DateTimeImmutable::class, 'createFromFormat', self::mock_date_create_immutable_from_format(), true);
 
         self::$areMocksActive = true;
     }
@@ -157,12 +161,44 @@ final class ClockMock
     }
 
     /**
+     * @see https://www.php.net/manual/en/function.date-create-from-format.php
+     */
+    private static function mock_date_create_from_format(): callable
+    {
+        return function ($format, $datetime, DateTimeZone $timezone = null) {
+            $dateTimeObject = \DateTime::createFromFormat($format, $datetime, $timezone);
+
+            $parsedDate = date_parse($datetime);
+
+            return $dateTimeObject->setTime(
+                $parsedDate['hour'] === false ? idate('H') : $parsedDate['hour'],
+                $parsedDate['minute'] === false ? idate('i') : $parsedDate['minute'],
+                $parsedDate['second'] === false ? idate('s') : $parsedDate['second'],
+                $parsedDate['fraction'] === false ? (int) date('u') : $parsedDate['fraction'],
+            );
+        };
+    }
+
+    /**
      * @see https://www.php.net/manual/en/function.date-create-immutable.php
      */
     private static function mock_date_create_immutable(): callable
     {
         return fn (?string $datetime = 'now', ?DateTimeZone $timezone = null)
             => new \DateTimeImmutable($datetime, $timezone);
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.date-create-immutable-from-format.php
+     */
+    public static function mock_date_create_immutable_from_format(): callable
+    {
+        return function ($format, $datetime, DateTimeZone $timezone = null) {
+            // Create an immutable instance starting from the mutable mock, so we don't have to replicate mocking logic.
+            $mutableDateTime = date_create_from_format($format, $datetime, $timezone);
+
+            return new \DateTimeImmutable($mutableDateTime->format('Y-m-d\TH:i:s.uT'), $timezone);
+        };
     }
 
     /**
