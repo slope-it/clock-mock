@@ -46,10 +46,20 @@ class ClockMockTest extends TestCase
     public function test_DateTimeImmutable_constructor_with_timezone()
     {
         $dateWithTimezone = new \DateTimeImmutable('1986-06-05 14:41:32+02:00');
-        
+
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('now'));
 
         $this->assertEquals($dateWithTimezone, new \DateTimeImmutable('1986-06-05 14:41:32+02:00'));
+    }
+
+    public function test_DateTimeImmutable_createFromFormat()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = \DateTimeImmutable::createFromFormat('Y-m-d', '2022-05-28');
+
+        // Verification: when not provided with a time, createFromFormat should use current time.
+        $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
     }
     
     public function test_DateTime_constructor_with_absolute_mocked_date()
@@ -97,6 +107,16 @@ class ClockMockTest extends TestCase
         $this->assertEquals($juneFifth1986, new \DateTime('1986-06-05'));
     }
 
+    public function test_DateTime_createFromFormat()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = \DateTime::createFromFormat('Y-m-d', '2022-05-28');
+
+        // Verification: when not provided with a time, createFromFormat should use current time.
+        $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
+    }
+
     public function test_date()
     {
         ClockMock::freeze(new \DateTime('1986-06-05'));
@@ -112,11 +132,33 @@ class ClockMockTest extends TestCase
         $this->assertEquals($fakeNow, date_create());
     }
 
+    public function test_date_create_from_format()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = date_create_from_format('Y-m-d', '2022-05-28');
+
+        // Verification: when not provided with a time, createFromFormat should use current time.
+        $this->assertInstanceOf(\DateTime::class, $dateTimeFromFormat);
+        $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
+    }
+
     public function test_date_create_immutable()
     {
         ClockMock::freeze($fakeNow = new \DateTimeImmutable('1986-06-05'));
 
         $this->assertEquals($fakeNow, date_create_immutable());
+    }
+
+    public function test_date_create_immutable_from_format()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = date_create_immutable_from_format('Y-m-d', '2022-05-28');
+
+        // Verification: when not provided with a time, createFromFormat should use current time.
+        $this->assertInstanceOf(\DateTimeImmutable::class, $dateTimeFromFormat);
+        $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
     }
 
     public function test_getdate()
