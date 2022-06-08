@@ -61,7 +61,16 @@ class ClockMockTest extends TestCase
         // Verification: when not provided with a time, createFromFormat should use current time.
         $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
     }
-    
+
+    public function test_DateTime_createFromFormat_epoch()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = \DateTime::createFromFormat('U', strval(time()));
+
+        $this->assertSame('1986-06-05 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
+    }
+
     public function test_DateTime_constructor_with_absolute_mocked_date()
     {
         ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));

@@ -165,7 +165,7 @@ final class ClockMock
      */
     private static function mock_date_create_from_format(): callable
     {
-        return function ($format, $datetime, DateTimeZone $timezone = null) {
+        return function (string $format, string $datetime, DateTimeZone $timezone = null) {
             $dateTimeObject = \DateTime::createFromFormat($format, $datetime, $timezone);
 
             $parsedDate = date_parse($datetime);
@@ -174,7 +174,7 @@ final class ClockMock
                 $parsedDate['hour'] === false ? idate('H') : $parsedDate['hour'],
                 $parsedDate['minute'] === false ? idate('i') : $parsedDate['minute'],
                 $parsedDate['second'] === false ? idate('s') : $parsedDate['second'],
-                $parsedDate['fraction'] === false ? (int) date('u') : $parsedDate['fraction'],
+                $parsedDate['fraction'] === false ? (int) date('u') : (int) $parsedDate['fraction'],
             );
         };
     }
