@@ -61,7 +61,7 @@ class ClockMockTest extends TestCase
         // Verification: when not provided with a time, createFromFormat should use current time.
         $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
     }
-    
+
     public function test_DateTime_constructor_with_absolute_mocked_date()
     {
         ClockMock::freeze($fakeNow = new \DateTime('1986-06-05'));
@@ -107,14 +107,35 @@ class ClockMockTest extends TestCase
         $this->assertEquals($juneFifth1986, new \DateTime('1986-06-05'));
     }
 
-    public function test_DateTime_createFromFormat()
+    public function test_DateTime_createFromFormat_with_time()
     {
-        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14.168432'));
+
+        $dateTimeFromFormat = \DateTime::createFromFormat('Y-m-d i', '2022-05-28 24');
+
+        $this->assertSame('2022-05-28 00:24:00.000000', $dateTimeFromFormat->format('Y-m-d H:i:s.u'));
+    }
+
+    public function test_DateTime_createFromFormat_without_time()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14.168432'));
 
         $dateTimeFromFormat = \DateTime::createFromFormat('Y-m-d', '2022-05-28');
 
         // Verification: when not provided with a time, createFromFormat should use current time.
-        $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
+        $this->assertSame('2022-05-28 12:13:14.168432', $dateTimeFromFormat->format('Y-m-d H:i:s.u'));
+    }
+
+    public function test_DateTime_createFromFormat_unix()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14.168432'));
+
+        // this strange pattern occurs in Symfony 4.4.42
+        // Symfony\Component\HttpFoundation\ResponseHeaderBag.php:306
+        $dateTimeFromFormat = \DateTime::createFromFormat('U', time());
+
+        // time() is integer seconds, so the microseconds get rounded off
+        $this->assertSame('1986-06-05 12:13:14.000000', $dateTimeFromFormat->format('Y-m-d H:i:s.u'));
     }
 
     public function test_date()

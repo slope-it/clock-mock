@@ -166,16 +166,26 @@ final class ClockMock
     private static function mock_date_create_from_format(): callable
     {
         return function ($format, $datetime, DateTimeZone $timezone = null) {
-            $dateTimeObject = \DateTime::createFromFormat($format, $datetime, $timezone);
+            $dateTimeObject = \DateTime::createFromFormat($format, (string) $datetime, $timezone);
 
-            $parsedDate = date_parse($datetime);
-
-            return $dateTimeObject->setTime(
-                $parsedDate['hour'] === false ? idate('H') : $parsedDate['hour'],
-                $parsedDate['minute'] === false ? idate('i') : $parsedDate['minute'],
-                $parsedDate['second'] === false ? idate('s') : $parsedDate['second'],
-                $parsedDate['fraction'] === false ? (int) date('u') : $parsedDate['fraction'],
-            );
+            // If the format doesn't include any time parts `createFromFormat` uses the current time, not all zeroes.
+            // In that case the un-mocked call above will use the real time, not the mocked time.
+            // This uses `date_parse_from_format` to detect whether the format includes time parts and,
+            // if so, replaces the time of the result with the frozen time.
+            // `date_parse_from_format` returns false for all time parts if no time parts are included in the format,
+            // but if the format includes at least one time part all time parts not included become zero instead.
+            $parsedDate = date_parse_from_format($format, (string) $datetime);
+            if ($parsedDate['hour'] === false) {
+                $frozen = ClockMock::getFrozenDateTime();
+                return $dateTimeObject->setTime(
+                    (int) $frozen->format('H'),
+                    (int) $frozen->format('i'),
+                    (int) $frozen->format('s'),
+                    (int) $frozen->format('u'),
+                );
+            } else {
+                return $dateTimeObject;
+            }
         };
     }
 
