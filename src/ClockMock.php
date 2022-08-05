@@ -175,7 +175,7 @@ final class ClockMock
             // `date_parse_from_format` returns false for all time parts if no time parts are included in the format,
             // but if the format includes at least one time part all time parts not included become zero instead.
             $parsedDate = date_parse_from_format($format, (string) $datetime);
-            if ($parsedDate['hour'] === false) {
+            if ($dateTimeObject !== false && $parsedDate['hour'] === false) {
                 $frozen = ClockMock::getFrozenDateTime();
                 return $dateTimeObject->setTime(
                     (int) $frozen->format('H'),
