@@ -79,7 +79,9 @@ final class ClockMock
 
         uopz_unset_return('date');
         uopz_unset_return('date_create');
+        uopz_unset_return('date_create_from_format');
         uopz_unset_return('date_create_immutable');
+        uopz_unset_return('date_create_immutable_from_format');
         uopz_unset_return('getdate');
         uopz_unset_return('gettimeofday');
         uopz_unset_return('gmdate');
@@ -92,6 +94,8 @@ final class ClockMock
         uopz_unset_return('strftime');
         uopz_unset_return('strtotime');
         uopz_unset_return('time');
+        uopz_unset_return(\DateTime::class, 'createFromFormat');
+        uopz_unset_return(\DateTimeImmutable::class, 'createFromFormat');
 
         if (extension_loaded('calendar')) {
             uopz_unset_return('unixtojd');
