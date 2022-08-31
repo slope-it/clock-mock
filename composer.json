@@ -1,5 +1,5 @@
 {
-    "name": "slope-it/clock-mock",
+    "name": "lancasters/clock-mock",
     "description": "A library for mocking current date and time in tests.",
     "type": "library",
     "license": "MIT",
