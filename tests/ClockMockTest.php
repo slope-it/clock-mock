@@ -349,7 +349,7 @@ class ClockMockTest extends TestCase
     {
         ClockMock::freeze(new \DateTime('@1619000631.123456'));
 
-        $this->assertEquals('0.123456 1619000631', microtime());
+        $this->assertEquals('0.12345600 1619000631', microtime());
         $this->assertSame(1619000631.123456, microtime(true));
     }
 
