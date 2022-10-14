@@ -324,8 +324,7 @@ final class ClockMock
             if ($as_float) {
                 return (float) self::$frozenDateTime->format('U.u');
             }
-
-            return self::$frozenDateTime->format('0.u U');
+            return self::$frozenDateTime->format('0.u00 U');
         };
 
         return fn (bool $as_float = false) => $microtime_mock($as_float);
