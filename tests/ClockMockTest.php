@@ -87,6 +87,19 @@ class ClockMockTest extends TestCase
         $this->assertSame('123456', $nowWithIndiaTimezone->format('u')); // does not vary
     }
 
+    /**
+     * @see https://github.com/slope-it/clock-mock/issues/26
+     */
+    public function test_DateTime_constructor_with_datetime_and_timezone()
+    {
+        ClockMock::freeze(new \DateTime('2022-04-04 14:26:29.123456')); // UTC, +00:00
+
+        $asiaTokyoTimezone = new \DateTime('1986-06-05 12:13:14', $indiaTimezone = new \DateTimeZone('Asia/Tokyo')); // +09:00
+
+        $this->assertEquals($indiaTimezone, $asiaTokyoTimezone->getTimezone());
+        $this->assertSame('1986-06-05 12:13:14', $asiaTokyoTimezone->format('Y-m-d H:i:s'));
+    }
+
     public function test_DateTime_constructor_with_relative_mocked_date_with_microseconds()
     {
         $juneFifth1986 = new \DateTime('1986-06-05');
