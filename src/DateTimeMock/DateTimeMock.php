@@ -20,7 +20,9 @@ class DateTimeMock extends \DateTime
         if ($datetime !== 'now' && $timezone !== null) {
             $datetime = $datetime . ' ' . $timezone->getName();
         }
+
         parent::__construct($datetime, $timezone);
+
         $this->setTimestamp(strtotime($datetime, ClockMock::getFrozenDateTime()->getTimestamp()));
 
         if ($this->shouldUseMicrosecondsOfFrozenDate($datetime)) {
