@@ -19,9 +19,24 @@ class DateTimeMock extends \DateTime
 
         parent::__construct($datetime, $timezone);
 
-        $this->setTimestamp(strtotime($datetime, ClockMock::getFrozenDateTime()->getTimestamp()));
+        $isDateTimeStringRelative = $this->isRelativeDateString($datetime);
 
-        if ($this->shouldUseMicrosecondsOfFrozenDate($datetime)) {
+        if ($timezone !== null && !$isDateTimeStringRelative) {
+            // When there's a timezone and the provided date is absolute, the timestamp must be calculated with that
+            // specific timezone in order to mimic behavior of the original \DateTime (which does not modify time).
+            $this->setTimestamp(
+                strtotime(
+                    "$datetime {$timezone->getName()}",
+                    ClockMock::getFrozenDateTime()->getTimestamp()
+                )
+            );
+        } else {
+            $this->setTimestamp(strtotime($datetime, ClockMock::getFrozenDateTime()->getTimestamp()));
+        }
+
+        // After some empirical tests, we've seen that microseconds are set to the current actual ones only when an
+        // absolute date or time is not provided.
+        if ($isDateTimeStringRelative) {
             $this->setTime(
                 (int) $this->format('H'),
                 (int) $this->format('i'),
@@ -31,10 +46,11 @@ class DateTimeMock extends \DateTime
         }
     }
 
-    private function shouldUseMicrosecondsOfFrozenDate(string $datetime): bool
+    /**
+     * Returns whether the provided one is a relative date (e.g. "now", "yesterday", "tomorrow", etc...).
+     */
+    private function isRelativeDateString(string $datetime): bool
     {
-        // After some empirical tests, we've seen that microseconds are set to the current actual ones only when all of
-        // these variables are false (i.e. when an absolute date or time is not provided).
         $parsedDate = date_parse($datetime);
         return $parsedDate['year'] === false
             && $parsedDate['month'] === false

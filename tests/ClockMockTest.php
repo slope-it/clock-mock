@@ -70,6 +70,24 @@ class ClockMockTest extends TestCase
     }
 
     /**
+     * @see https://github.com/slope-it/clock-mock/issues/26
+     */
+    public function test_DateTime_constructor_with_absolute_date_and_timezone()
+    {
+        // The mocked date, either aboslute or relative, is irrelevant for this test. Having a mocked date is enough.
+        ClockMock::freeze(new \DateTime('now'));
+
+        $absoluteDateTimeWithTimezone = new \DateTime(
+            '1986-06-05 12:13:14',
+            $japanTimezone = new \DateTimeZone('Asia/Tokyo')
+        );
+
+        // Verification: when date is absolute and timezone is specified, the mocked clock should have no effect.
+        $this->assertEquals($japanTimezone, $absoluteDateTimeWithTimezone->getTimezone());
+        $this->assertSame('1986-06-05 12:13:14', $absoluteDateTimeWithTimezone->format('Y-m-d H:i:s'));
+    }
+
+    /**
      * @see https://github.com/slope-it/clock-mock/issues/7
      */
     public function test_DateTime_constructor_with_microseconds_and_specific_timezone()
