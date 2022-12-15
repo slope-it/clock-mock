@@ -274,13 +274,6 @@ class ClockMockTest extends TestCase
         $this->assertEquals('2010-05-22', gmdate('Y-m-d', (new \DateTime('2010-05-22'))->getTimestamp()));
     }
 
-    public function test_gmstrftime()
-    {
-        ClockMock::freeze($fakeNow = new \DateTime('2022-04-04 14:26:29', new \DateTimeZone('Europe/Kiev')));
-
-        $this->assertEquals('2022-04-04 11:26:29', gmstrftime('%F %T'));
-    }
-
     public function dateProvider_gmmktime(): array
     {
         // NOTE: for all datasets, hour in freezeDateTime is completely irrelevant because always overridden by $hour
@@ -392,13 +385,6 @@ class ClockMockTest extends TestCase
         // Verify that original values are restored when mocks are reset
         $this->assertSame($originalServerRequestTime, $_SERVER['REQUEST_TIME']);
         $this->assertSame($originalServerRequestTimeFloat, $_SERVER['REQUEST_TIME_FLOAT']);
-    }
-
-    public function test_strftime()
-    {
-        ClockMock::freeze($fakeNow = new \DateTimeImmutable('2022-04-04 14:26:29'));
-
-        $this->assertEquals('2022-04-04 14:26:29', strftime('%F %T'));
     }
 
     public function dateProvider_mktime(): array
