@@ -24,7 +24,7 @@
     "require-dev": {
         "ext-calendar": "*",
         "mockery/mockery": "1.4.3",
-        "phpunit/phpunit": "9.5.4"
+        "phpunit/phpunit": "9.5.27"
     },
     "autoload": {
         "psr-4": {
