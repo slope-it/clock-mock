@@ -15,11 +15,15 @@ class DateTimeMock extends \DateTime
 {
     public function __construct(?string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
-        $datetime = $datetime ?? 'now';
-
         parent::__construct($datetime, $timezone);
 
         $isDateTimeStringRelative = $this->isRelativeDateString($datetime);
+
+        // Empty string is not accepted by strtotime, which we use below, so normalize to 'now'. By the way, this is
+        // also equivalent to how original \DateTime treats it.
+        if ($datetime === '') {
+            $datetime = 'now';
+        }
 
         if ($timezone !== null && !$isDateTimeStringRelative) {
             // When there's a timezone and the provided date is absolute, the timestamp must be calculated with that
