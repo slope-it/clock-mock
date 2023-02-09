@@ -88,6 +88,16 @@ class ClockMockTest extends TestCase
     }
 
     /**
+     * @see https://github.com/slope-it/clock-mock/issues/31
+     */
+    public function test_DateTime_constructor_with_empty_string()
+    {
+        ClockMock::freeze($fakeNow = new \DateTime('1986-06-05 14:26:29.123456'));
+
+        $this->assertEquals($fakeNow, new \DateTime('')); // Empty string should behave exactly as "now"
+    }
+
+    /**
      * @see https://github.com/slope-it/clock-mock/issues/7
      */
     public function test_DateTime_constructor_with_microseconds_and_specific_timezone()
