@@ -52,6 +52,37 @@ class ClockMockTest extends TestCase
         $this->assertEquals($dateWithTimezone, new \DateTimeImmutable('1986-06-05 14:41:32+02:00'));
     }
 
+    public function test_DateTimeImmutable_constructor_with_timezone_respect_zone_type()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('now'));
+
+        $timezoneType3 = 'Asia/Tokyo';
+        $date = new \DateTimeImmutable('1986-06-05', new \DateTimeZone($timezoneType3));
+
+        $this->assertEquals($date->getTimezone()->getName(), $timezoneType3);
+
+        $timezoneType2 = 'CDT';
+        $date = new \DateTimeImmutable('1986-06-05', new \DateTimeZone($timezoneType2));
+
+        $this->assertEquals($date->getTimezone()->getName(), $timezoneType2);
+    }
+
+    public function test_DateTimeImmutable_constructor_without_timezone()
+    {
+        $originalTimezone = date_default_timezone_get();
+
+        $defaultTimezone = 'Asia/Tokyo';
+        date_default_timezone_set($defaultTimezone);
+
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05'));
+
+        $newDate = new \DateTimeImmutable('1986-06-05');
+
+        $this->assertEquals($newDate->getTimezone()->getName(), $defaultTimezone);
+
+        date_default_timezone_set($originalTimezone); // Revert timezone.
+    }
+
     public function test_DateTimeImmutable_createFromFormat()
     {
         ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
