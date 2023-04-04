@@ -70,17 +70,18 @@ class ClockMockTest extends TestCase
     public function test_DateTimeImmutable_constructor_without_timezone()
     {
         $originalTimezone = date_default_timezone_get();
-
         $defaultTimezone = 'Asia/Tokyo';
         date_default_timezone_set($defaultTimezone);
 
-        ClockMock::freeze(new \DateTimeImmutable('1986-06-05'));
+        try {
+            ClockMock::freeze(new \DateTimeImmutable('1986-06-05'));
 
-        $newDate = new \DateTimeImmutable('1986-06-05');
+            $newDate = new \DateTimeImmutable('1986-06-05');
 
-        $this->assertEquals($newDate->getTimezone()->getName(), $defaultTimezone);
-
-        date_default_timezone_set($originalTimezone); // Revert timezone.
+            $this->assertEquals($newDate->getTimezone()->getName(), $defaultTimezone);
+        } finally {
+            date_default_timezone_set($originalTimezone); // Revert timezone.
+        }
     }
 
     public function test_DateTimeImmutable_createFromFormat()
