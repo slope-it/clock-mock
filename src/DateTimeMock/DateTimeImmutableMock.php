@@ -17,6 +17,6 @@ class DateTimeImmutableMock extends \DateTimeImmutable
         // Create an immutable instance starting from the mutable mock, so we don't have to replicate mocking logic.
         $mutableDateTime = new DateTimeMock($datetime, $timezone);
 
-        parent::__construct($mutableDateTime->format('Y-m-d\TH:i:s.uT'), $timezone);
+        parent::__construct($mutableDateTime->format('Y-m-d\TH:i:s.u'), $mutableDateTime->getTimezone());
     }
 }
