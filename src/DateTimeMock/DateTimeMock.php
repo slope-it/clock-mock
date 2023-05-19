@@ -28,12 +28,15 @@ class DateTimeMock extends \DateTime
         if ($timezone !== null && !$isDateTimeStringRelative) {
             // When there's a timezone and the provided date is absolute, the timestamp must be calculated with that
             // specific timezone in order to mimic behavior of the original \DateTime (which does not modify time).
-            $this->setTimestamp(
-                strtotime(
-                    "$datetime {$timezone->getName()}",
-                    ClockMock::getFrozenDateTime()->getTimestamp()
-                )
-            );
+            $timestamp = strtotime("$datetime {$timezone->getName()}", ClockMock::getFrozenDateTime()->getTimestamp());
+            if ($timestamp === false) {
+                // Some non-canonical timezone names (e.g. US/Eastern) are not supported by `strtotime`. In these cases,
+                // apply the same workaround by using the offset in seconds.
+                $offset = -$timezone->getOffset(new \DateTime('now'));
+                $timestamp = strtotime("$datetime $offset seconds", ClockMock::getFrozenDateTime()->getTimestamp());
+            }
+
+            $this->setTimestamp($timestamp);
         } else {
             $this->setTimestamp(strtotime($datetime, ClockMock::getFrozenDateTime()->getTimestamp()));
         }
