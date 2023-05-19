@@ -86,12 +86,10 @@ final class ClockMock
         uopz_unset_return('gettimeofday');
         uopz_unset_return('gmdate');
         uopz_unset_return('gmmktime');
-        uopz_unset_return('gmstrftime');
         uopz_unset_return('idate');
         uopz_unset_return('localtime');
         uopz_unset_return('microtime');
         uopz_unset_return('mktime');
-        uopz_unset_return('strftime');
         uopz_unset_return('strtotime');
         uopz_unset_return('time');
         uopz_unset_return(\DateTime::class, 'createFromFormat');
@@ -99,6 +97,14 @@ final class ClockMock
 
         if (extension_loaded('calendar')) {
             uopz_unset_return('unixtojd');
+        }
+
+        // The following two are deprecated -- prepare for removal in PHP 9.0
+        if (function_exists('gmstrftime')) {
+            uopz_unset_return('gmstrftime');
+        }
+        if (function_exists('strftime')) {
+            uopz_unset_return('strftime');
         }
 
         uopz_unset_mock(\DateTime::class);
@@ -123,17 +129,23 @@ final class ClockMock
         uopz_set_return('gettimeofday', self::mock_gettimeofday(), true);
         uopz_set_return('gmdate', self::mock_gmdate(), true);
         uopz_set_return('gmmktime', self::mock_gmmktime(), true);
-        uopz_set_return('gmstrftime', self::mock_gmstrftime(), true);
         uopz_set_return('idate', self::mock_idate(), true);
         uopz_set_return('localtime', self::mock_localtime(), true);
         uopz_set_return('microtime', self::mock_microtime(), true);
         uopz_set_return('mktime', self::mock_mktime(), true);
-        uopz_set_return('strftime', self::mock_strftime(), true);
         uopz_set_return('strtotime', self::mock_strtotime(), true);
         uopz_set_return('time', self::mock_time(), true);
 
         if (extension_loaded('calendar')) {
             uopz_set_return('unixtojd', self::mock_unixtojd(), true);
+        }
+
+        // The following two are deprecated -- prepare for removal in PHP 9.0
+        if (function_exists('gmstrftime')) {
+            uopz_set_return('gmstrftime', self::mock_gmstrftime(), true);
+        }
+        if (function_exists('strftime')) {
+            uopz_set_return('strftime', self::mock_strftime(), true);
         }
 
         uopz_set_mock(\DateTime::class, DateTimeMock::class);
