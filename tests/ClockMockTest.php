@@ -282,7 +282,7 @@ class ClockMockTest extends TestCase
         );
     }
 
-    public function dataProvider_gettimeofday(): array
+    public static function dataProvider_gettimeofday(): array
     {
         return [
             ['2022-04-04 14:26:29.123456', 'UTC', [1649082389, 123456, 0, 0]],
@@ -323,7 +323,7 @@ class ClockMockTest extends TestCase
         $this->assertEquals('2022-04-04 11:26:29', gmstrftime('%F %T'));
     }
 
-    public function dateProvider_gmmktime(): array
+    public static function dataProvider_gmmktime(): array
     {
         // NOTE: for all datasets, hour in freezeDateTime is completely irrelevant because always overridden by $hour
         // parameter provided to gmmktime. Also, in expectedDateTime hour is always "13" because hour 10 in GMT
@@ -368,7 +368,7 @@ class ClockMockTest extends TestCase
     }
 
     /**
-     * @dataProvider dateProvider_gmmktime
+     * @dataProvider dataProvider_gmmktime
      */
     public function test_gmmktime(string $freezeDateTime, array $mktimeArgs, string $expectedDateTime)
     {
@@ -443,7 +443,7 @@ class ClockMockTest extends TestCase
         $this->assertEquals('2022-04-04 14:26:29', strftime('%F %T'));
     }
 
-    public function dateProvider_mktime(): array
+    public static function dataProvider_mktime(): array
     {
         return [
             [
@@ -485,7 +485,7 @@ class ClockMockTest extends TestCase
     }
 
     /**
-     * @dataProvider dateProvider_mktime
+     * @dataProvider dataProvider_mktime
      */
     public function test_mktime(string $freezeDateTime, array $mktimeArgs, string $expectedDateTime)
     {
