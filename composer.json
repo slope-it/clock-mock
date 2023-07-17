@@ -23,8 +23,8 @@
     },
     "require-dev": {
         "ext-calendar": "*",
-        "mockery/mockery": "1.4.3",
-        "phpunit/phpunit": "9.5.4"
+        "mockery/mockery": "^1.4.3",
+        "phpunit/phpunit": "^9.6 || ^10"
     },
     "autoload": {
         "psr-4": {
