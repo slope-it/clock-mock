@@ -20,7 +20,7 @@ jobs:
                     - "8.2"
         steps:
             - name: "Checkout"
-              uses: "actions/checkout@v2"
+              uses: "actions/checkout@v3"
               with:
                   fetch-depth: 2
 
@@ -31,7 +31,7 @@ jobs:
                   extensions: "uopz"
 
             - name: "Cache dependencies installed with composer"
-              uses: "actions/cache@v2"
+              uses: "actions/cache@v3"
               with:
                   path: "~/.composer/cache"
                   key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
