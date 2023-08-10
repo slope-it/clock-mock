@@ -223,7 +223,13 @@ final class ClockMock
             // Create an immutable instance starting from the mutable mock, so we don't have to replicate mocking logic.
             $mutableDateTime = date_create_from_format($format, $datetime, $timezone);
 
-            return new \DateTimeImmutable($mutableDateTime->format('Y-m-d\TH:i:s.u'), $mutableDateTime->getTimezone());
+            return $mutableDateTime
+                ? new \DateTimeImmutable(
+                    $mutableDateTime->format('Y-m-d\TH:i:s.u'),
+                    $mutableDateTime->getTimezone()
+                )
+                : false
+            ;
         };
     }
 
