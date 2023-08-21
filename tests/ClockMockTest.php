@@ -269,6 +269,15 @@ class ClockMockTest extends TestCase
         $this->assertSame('2022-05-28 12:13:14', $dateTimeFromFormat->format('Y-m-d H:i:s'));
     }
 
+    public function test_date_create_immutable_from_format_with_invalid_format()
+    {
+        ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
+
+        $dateTimeFromFormat = date_create_immutable_from_format('d/m/Y', '2022-05-28');
+
+        $this->assertFalse($dateTimeFromFormat);
+    }
+
     public function test_date_create_from_format_freeze_reset_must_not_use_mock()
     {
         ClockMock::freeze(new \DateTimeImmutable('1986-06-05 12:13:14'));
