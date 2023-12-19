@@ -214,7 +214,7 @@ final class ClockMock
      */
     private static function date_create_from_format(): callable
     {
-        $date_create_from_format_mock = function (string $format, string $datetime, ?DateTimeZone $timezone = null) {
+        $date_create_from_format_mock = function ($format, $datetime, ?DateTimeZone $timezone = null) {
             switch ($format) {
                 // handle BonusModelConstants::RECURRENCE_DAILY: calls
                 case 'H:i':
@@ -231,11 +231,11 @@ final class ClockMock
                     break;
                 // untreated format, call unmocked fuction
                 default:
-                    return \DateTime::createFromFormat($format, $datetime, $timezone);
+                    return \DateTime::createFromFormat($format, (string) $datetime, $timezone);
             }
         };
 
-        return fn (string $format, string $datetime, ?DateTimeZone $timezone = null) => $date_create_from_format_mock($format, $datetime, $timezone);
+        return fn ($format, $datetime, ?DateTimeZone $timezone = null) => $date_create_from_format_mock($format, $datetime, $timezone);
     }
 
 }
