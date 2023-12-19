@@ -218,11 +218,11 @@ final class ClockMock
             switch ($format) {
                 // handle BonusModelConstants::RECURRENCE_DAILY: calls
                 case 'H:i':
-                    return (new \DateTime)->modify($datetime);
+                    return (new \DateTime)->modify((string) $datetime);
                     break;
                 // handle BonusModelConstants::RECURRENCE_WEEKLY calls
                 case 'D H:i':
-                    return (new \DateTime)->modify($datetime);
+                    return (new \DateTime)->modify((string) $datetime);
                     break;
                 // handle BonusModelConstants::RECURRENCE_MONTHLY calls
                 case 'd H:i':
