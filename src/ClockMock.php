@@ -229,7 +229,7 @@ final class ClockMock
                     $gd = getdate();
                     return (new \DateTime(idate('Y', self::$frozenDateTime->getTimestamp()) . '-' . idate('m', self::$frozenDateTime->getTimestamp()) . '-' . $datetime));
                     break;
-                // untreated format, call unmocked fuction
+                // untreated format, call unmocked function
                 default:
                     return \DateTime::createFromFormat($format, (string) $datetime, $timezone);
             }
