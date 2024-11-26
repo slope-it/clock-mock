@@ -181,7 +181,7 @@ final class ClockMock
      */
     private static function mock_date_create_from_format(): callable
     {
-        return function ($format, $datetime, DateTimeZone $timezone = null) {
+        return function ($format, $datetime, ?DateTimeZone $timezone = null) {
             $dateTimeObject = \DateTime::createFromFormat($format, (string) $datetime, $timezone);
 
             // If the format doesn't include any time parts `createFromFormat` uses the current time, not all zeroes.
@@ -219,7 +219,7 @@ final class ClockMock
      */
     public static function mock_date_create_immutable_from_format(): callable
     {
-        return function ($format, $datetime, DateTimeZone $timezone = null) {
+        return function ($format, $datetime, ?DateTimeZone $timezone = null) {
             // Create an immutable instance starting from the mutable mock, so we don't have to replicate mocking logic.
             $mutableDateTime = date_create_from_format($format, $datetime, $timezone);
 
