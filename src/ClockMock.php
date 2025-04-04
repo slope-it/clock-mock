@@ -47,7 +47,7 @@ final class ClockMock
 
         // When freezing, only store $_SERVER['REQUEST_TIME_FLOAT'] the first time (i.e. when the property is null).
         // This way we will restore the actual original value even after freezing multiple times in a row.
-        if (self::$originalServerRequestTimeFloat === null) {
+        if (self::$originalServerRequestTimeFloat === null && isset($_SERVER['REQUEST_TIME_FLOAT'])) {
             self::$originalServerRequestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
         }
 
